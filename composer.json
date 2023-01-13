@@ -1,0 +1,27 @@
+{
+    "name": "michaelmannucci/webhook",
+    "description": "An addon for Statamic that sends new entries to a webhook, allowing for integration with other platforms",
+    "type": "statamic-addon",
+    "authors": [
+        {
+            "name": "Michael Mannucci",
+            "email": "contact@michaelmannucci.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Michaelmannucci\\Webhook\\": "src"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Webhook",
+            "description": "Webhook addon that sends new entries to a webhook, allowing for integration with other platforms."
+        },
+        "laravel": {
+            "providers": [
+                "Michaelmannucci\\Webhook\\ServiceProvider"
+            ]
+        }
+    }
+}
