@@ -2,12 +2,13 @@
 
 return [
     
-    // Webhook url
     'webhook_url' => 'https://webhookurl.com',
 
-    // Which fields to pass
+    'collections' => [''],
+
+    // Entry fields
     'fields' => [''],
 
-    // Which collections to pass
-    'collections' => ['']
+    // Asset fields
+    'asset_fields' => ['']
 ];

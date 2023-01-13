@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Statamic\Events\EntrySaved;
 use Statamic\Events\EntryCreated;
+use Statamic\Assets\Asset;
 
 // This class listens to the EntryCreated event
 class Webhook
@@ -26,12 +27,6 @@ class Webhook
                 // Get the fields specified in the config file
                 $fields = config('webhook.fields');
 
-                // Check if the fields array is empty and log an error is true
-                if(empty($fields)) {
-                    Log::error('Webhook fields are not set in the config.');
-                    return;
-                }
-
                 // Create an array to hold the data to send to the webhook
                 $data = [];
 
@@ -40,7 +35,12 @@ class Webhook
                     if ($field === 'absoluteUrl') {
                         $data['absoluteUrl'] = $entry->absoluteUrl();
                     } else {
-                        $data[$field] = $entry->{$field};
+                        $value = $entry->{$field};
+                        if ($value instanceof \Statamic\Assets\Asset) {
+                            $data[$field] = array_only($value->toArray(), config('webhook.asset_fields'));
+                        } else {
+                            $data[$field] = $value;
+                        }
                     }
                 }
 
