@@ -26,6 +26,12 @@ class Webhook
                 // Get the fields specified in the config file
                 $fields = config('webhook.fields');
 
+                // Check if the fields array is empty and log an error is true
+                if(empty($fields)) {
+                    Log::error('Webhook fields are not set in the config.');
+                    return;
+                }
+
                 // Create an array to hold the data to send to the webhook
                 $data = [];
 
