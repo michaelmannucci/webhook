@@ -35,11 +35,12 @@ class Webhook
         $data = [];
         foreach ($fieldsToSend as $key => $field) {
             if (is_array($field)) {
+                // Check if this is an assets or related_entries array, then get the data for these fields
                 if ($key === "assets" || $key === "related_entries") {
                     foreach($field as $subkey => $subfields){
                         $data[$subkey] = array_only($entry->{$subkey}->toArray(), $subfields);
                     }
-                };
+                }
             } else {
                 // Return the absoluteUrl
                 if ($field === 'absoluteUrl') {
@@ -56,12 +57,9 @@ class Webhook
 
         // Send the data to the webhook using Guzzle
         $client = new Client();
-        try {
-            $response = $client->post($webhookUrl, [
+
+        $response = $client->post($webhookUrl, [
                 'json' => $data
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error sending data to webhook: '.$e->getMessage());
-        }
+        ]);
     }
 }
