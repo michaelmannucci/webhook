@@ -7,53 +7,61 @@ use Illuminate\Support\Facades\Log;
 use Statamic\Events\EntrySaved;
 use Statamic\Events\EntryCreated;
 use Statamic\Assets\Asset;
+use Statamic\Facades\Entry;
 
 // This class listens to the EntryCreated event
 class Webhook
 {
     public function handle(EntryCreated $event)
     {
-
-        // Get the entry object from the event
+        // Get the entry from the event
         $entry = $event->entry;
 
-        // Get the collections specified in the config
-        $collections = config('webhook.collections');
+        // Get the collection from the entry
+        $collection = $entry->collection();
 
-        // Check if the entry collection is in the collections array specified in the config
-        if(in_array($entry->collectionHandle(), $collections)){
+        // Get the collection handle from the collection
+        $collectionHandle = $collection->handle();
 
-            if($entry->published()){
-                // Get the fields specified in the config file
-                $fields = config('webhook.fields');
+        // Check if the collection handle is included in the config
+        if (!in_array($collectionHandle, array_keys(config('webhook.collections')))) {
+            return;
+        }
 
-                // Create an array to hold the data to send to the webhook
-                $data = [];
+        // Get the fields to send from the config
+        $fieldsToSend = config('webhook.collections.'.$collectionHandle);
 
-                // Loop through the fields and add the corresponding data from the entry
-                foreach ($fields as $field) {
-                    if ($field === 'absoluteUrl') {
-                        $data['absoluteUrl'] = $entry->absoluteUrl();
-                    } else {
-                        $value = $entry->{$field};
-                        if ($value instanceof \Statamic\Assets\Asset) {
-                            $data[$field] = array_only($value->toArray(), config('webhook.asset_fields'));
-                        } else {
-                            $data[$field] = $value;
-                        }
+        // Build the data to send
+        $data = [];
+        foreach ($fieldsToSend as $key => $field) {
+            if (is_array($field)) {
+                if ($key === "assets" || $key === "related_entries") {
+                    foreach($field as $subkey => $subfields){
+                        $data[$subkey] = array_only($entry->{$subkey}->toArray(), $subfields);
                     }
+                };
+            } else {
+                // Return the absoluteUrl
+                if ($field === 'absoluteUrl') {
+                    $data['absoluteUrl'] = $entry->absoluteUrl();
+                } else {
+                    // Return the regular fields
+                    $data[$field] = $entry->get($field);
                 }
-
-                // Create a new Guzzle client
-                $client = new Client();
-
-                $webhook_url = config('webhook.webhook_url');
-
-                // Send a POST request to the webhook with the title and URL of the entry as the request body
-                $response = $client->post($webhook_url, [
-                    'json' => $data
-                ]);
             }
+        }
+
+        // Get the webhook URL from the config
+        $webhookUrl = config('webhook.webhook_url');
+
+        // Send the data to the webhook using Guzzle
+        $client = new Client();
+        try {
+            $response = $client->post($webhookUrl, [
+                'json' => $data
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error sending data to webhook: '.$e->getMessage());
         }
     }
 }
