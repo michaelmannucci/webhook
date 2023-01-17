@@ -2,13 +2,11 @@
 
 return [
     
-    'webhook_url' => 'https://webhookurl.com',
+    // Webhook url
+    'webhook_url' => 'https://webhook.site/11aa1a48-98b7-4338-9ce8-061e7ae61e95',
 
-    'collections' => [''],
-
-    // Entry fields
-    'fields' => [''],
-
-    // Asset fields
-    'asset_fields' => ['']
+    // Which collections to pass
+    'collections' => [
+        
+    ],
 ];
