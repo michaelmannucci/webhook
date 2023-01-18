@@ -27,9 +27,11 @@ return [
                     'title',
                     'handle'
                 ],
-                'tags' => [
-                    'title'
-                ]
+            ],
+            'assets' => [
+                'image' => [
+                    'title',
+                ],
             ]
         ],
         'events' => [
