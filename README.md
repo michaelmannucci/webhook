@@ -4,7 +4,43 @@ The Webhook Addon for Statamic 3 allows you to send new entries to a specified w
 ## Installation
 1. Require the package using `composer require michaelmannucci/webhook`
 2. The config file should auto-publish, but if not, run `php artisan vendor:publish --tag="webhook"`
-3. In the config/webhook.php file, specify the webhook URL, the fields you want to send, and the collections you want to target.
+3. In the `config/webhook.php file`, specify the webhook URL in the `webhook_url` key and the fields you want to send for each collection in the `collections` key.
+
+## Configuration
+Here is an example configuration:
+
+```
+<?php
+
+return [
+    // Webhook url
+    'webhook_url' => 'https://webhook.example.com/',
+
+    // Which collections to pass
+    'collections' => [
+        'blog' => [
+            'title',
+            'absoluteUrl',
+            'content',
+            'related_entries' => [
+                'categories' => [
+                    'title',
+                    'handle'
+                ],
+                'tags' => [
+                    'title'
+                ]
+            ]
+        ],
+        'events' => [
+            'title',
+            'absoluteUrl',
+            'start_date',
+            'location'
+        ]
+    ],
+];
+```
 
 > Tip: When testing the webhook, you can use a service like https://webhook.site/ to see the data that is being sent from your addon. This is a great way to verify that the data is being sent correctly and to troubleshoot any issues that may arise.
 

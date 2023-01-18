@@ -1,12 +1,30 @@
 <?php
 
 return [
-    
     // Webhook url
-    'webhook_url' => 'https://webhook.site/11aa1a48-98b7-4338-9ce8-061e7ae61e95',
+//    'webhook_url' => 'https://webhook.example.com/',
 
     // Which collections to pass
-    'collections' => [
-        
-    ],
+//    'collections' => [
+//        'blog' => [
+//            'title',
+//            'absoluteUrl',
+//            'content',
+//            'related_entries' => [
+//                'categories' => [
+//                    'title',
+//                    'handle'
+//                ],
+//                'tags' => [
+//                    'title'
+//                ]
+//            ]
+//        ],
+//        'events' => [
+//            'title',
+//            'absoluteUrl',
+//            'start_date',
+//            'location'
+//        ]
+//    ],
 ];
